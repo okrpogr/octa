@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Let's start with your BMR!</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #232323;
+            color: #daff7d;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #009554;
+            padding: 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.5em;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #333633;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 8px;
+            border: none;
+            background-color: #232323;
+            color: #daff7d;
+        }
+
+        input[type="radio"] {
+            margin-right: 5px;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            background-color: #232323;
+            color: #daff7d;
+            margin-top: 5px;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid #daff7d;
+        }
+
+        th {
+            color: #009554;
+        }
+
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
+            background-color: #009554;
+            color: #232323;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #00b46a;
+        }
+    </style>
+</head>
+
+<body>
+    <header>Let's start with your BMR!</header>
+
+    <div class="container">
+        <h2>Basic Information</h2>
+
+        <label for="age">Age:</label>
+        <input type="number" id="age" placeholder="Enter your age in years" />
+
+        <label for="weight">Weight:</label>
+        <input type="number" id="weight" placeholder="Enter your weight in kg" />
+
+        <label for="height">Height:</label>
+        <input type="number" id="height" placeholder="Enter your height in cm" />
+
+        <label for="gender">Gender:</label>
+        <input type="radio" name="gender" value="male"> Male
+        <input type="radio" name="gender" value="female"> Female
+
+        <label for="activity">Activity Level:</label>
+        <select id="activity">
+            <option value="1.2">Sedentary</option>
+            <option value="1.375">Lightly Active</option>
+            <option value="1.55">Moderately Active</option>
+            <option value="1.725">Very Active</option>
+            <option value="1.9">Extra Active</option>
+        </select>
+
+        <table>
+            <tr>
+                <th>Sedentary</th>
+                <td>Little or no exercise</td>
+            </tr>
+            <tr>
+                <th>Lightly Active</th>
+                <td>Light exercise/sports 1-3 days/week</td>
+            </tr>
+            <tr>
+                <th>Moderately Active</th>
+                <td>Moderate exercise/sports 3-5 days/week</td>
+            </tr>
+            <tr>
+                <th>Very Active</th>
+                <td>Hard exercise/sports 6-7 days a week</td>
+            </tr>
+            <tr>
+                <th>Extra Active</th>
+                <td>Very hard exercise/sports & physical job or 2x training</td>
+            </tr>
+        </table>
+
+        <button id="next-btn">Next</button>
+    </div>
+
+    <script>
+        document.getElementById("next-btn").addEventListener("click", function() {
+            let age = document.getElementById("age").value;
+            let weight = document.getElementById("weight").value;
+            let height = document.getElementById("height").value;
+            let genderRadio = document.querySelector('input[name=gender]:checked');
+            let activity = document.getElementById("activity").value;
+
+            if (!age || !weight || !height || !genderRadio) {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            let gender = genderRadio.value;
+
+            //saved2 localstorage
+            localStorage.setItem("age", age);
+            localStorage.setItem("weight", weight);
+            localStorage.setItem("height", height);
+            localStorage.setItem("gender", gender);
+            localStorage.setItem("activity", activity);
+
+            //redirect to next page
+            window.location.href = "goals.html";
+        });
+    </script>
+</body>
+</html>

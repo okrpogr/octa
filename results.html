@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Results</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #232323;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        h2 {
+            color: #daff7d;
+            margin-top: 30px;
+        }
+
+        #results {
+            background-color: #333633;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 30px auto;
+            max-width: 500px;
+            text-align: left;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        #results h3 {
+            color: #daff7d;
+        }
+
+        hr {
+            border: 1px solid #009554;
+            margin: 15px 0;
+        }
+
+        button {
+            background-color: #009554;
+            color: #ffffff;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: background-color 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #007a44;
+        }
+
+        .chart-container {
+            width: 280px;
+            height: 280px;
+            margin: 20px auto;
+            background-color: #333633;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Your Macros!</h2>
+
+    <div id="results"></div>
+
+    <div class="chart-container">
+        <canvas id="macroChart"></canvas>
+    </div>
+
+    <button onclick="window.location.href='goals.html'">← Go Back</button>
+    <button onclick="window.location.href='dashboard.html'">Go to Dashboard</button>
+
+    <script>
+        //user info
+        let age = Number(localStorage.getItem("age"));
+        let height = Number(localStorage.getItem("height"));
+        let weight = Number(localStorage.getItem("weight"));
+        let gender = localStorage.getItem("gender");
+        let goal = localStorage.getItem("goal");
+        let experience = localStorage.getItem("experience");
+        let type = localStorage.getItem("type");
+        let activity = Number(localStorage.getItem("activity"));
+
+        //BMR
+        let bmr = (gender === "male")
+            ? 10 * weight + 6.25 * height - 5 * age + 5
+            : 10 * weight + 6.25 * height - 5 * age - 161;
+
+        //TDEE
+        let tdee = bmr * activity;
+
+        //tdee based on goal
+        if (goal === "lose_quick") tdee -= 500;
+        else if (goal === "lose_slow") tdee -= 300;
+        else if (goal === "gain_slow") tdee += 200;
+        else if (goal === "gain_quick") tdee += 300;
+
+        //adjusted for experience
+        if (experience === "beginner") tdee *= 1.05;
+        else if (experience === "advanced") tdee *= 0.95;
+
+        //by fitness type
+        const macroTable = {
+            "casual": { proteinPerKg: 1.6, fatPercent: 0.30, carbsPerKg: 3 },
+            "strength": { proteinPerKg: 2.1, fatPercent: 0.25, carbsPerKg: 4 },
+            "fat_loss": { proteinPerKg: 2.2, fatPercent: 0.25, carbsPerKg: 3 },
+            "bodybuilder": { proteinPerKg: 2.3, fatPercent: 0.20, carbsPerKg: 4 },
+            "endurance": { proteinPerKg: 1.8, fatPercent: 0.20, carbsPerKg: 6 },
+            "athlete": { proteinPerKg: 2.0, fatPercent: 0.25, carbsPerKg: 5 }
+        };
+
+        let macros = macroTable[type];
+        if (!macros) {
+            document.getElementById("results").innerHTML = "<p>Error: No macro data found. Please go back and select your fitness type again.</p>";
+            throw new Error("Missing macro data");
+        }
+
+        //macro calculations
+        let proteinGrams = macros.proteinPerKg * weight;
+        let proteinCalories = proteinGrams * 4;
+
+        let fatCalories = tdee * macros.fatPercent;
+        let fatGrams = fatCalories / 9;
+
+        let carbGrams = macros.carbsPerKg * weight;
+        let carbCalories = carbGrams * 4;
+
+        localStorage.setItem("tdee", Math.round(tdee));
+
+
+        //dosplay yuh
+        document.getElementById("results").innerHTML = `
+            <p><strong>Goal:</strong> ${goal}</p>
+            <p><strong>Experience:</strong> ${experience}</p>
+            <p><strong>Fitness Type:</strong> ${type}</p>
+            <hr>
+            <h3>Recommended Macros</h3>
+            <p><strong>BMR:</strong> ${Math.round(bmr)} kcal/day</p>
+            <p><strong>TDEE (adjusted):</strong> ${Math.round(tdee)} kcal/day</p>
+            <p><strong>Protein:</strong> ${proteinGrams.toFixed(1)} g</p>
+            <p><strong>Fat:</strong> ${fatGrams.toFixed(1)} g</p>
+            <p><strong>Carbohydrates:</strong> ${carbGrams.toFixed(1)} g</p>
+        `;
+
+        //pie chart
+        const ctx = document.getElementById('macroChart').getContext('2d');
+        const macroChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Protein', 'Fat', 'Carbs'],
+                datasets: [{
+                    data: [proteinCalories, fatCalories, carbCalories],
+                    backgroundColor: [
+                        '#daff7d', 
+                        '#009554', 
+                        '#555' 
+                    ],
+                    borderColor: ['#232323', '#232323', '#232323'],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: '#ffffff' } },
+                    title: { display: true, text: 'Macro Split', color: '#daff7d' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let gramsArray = [proteinGrams, fatGrams, carbGrams];
+                                return `${context.label}: ${gramsArray[context.dataIndex].toFixed(1)} g`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
