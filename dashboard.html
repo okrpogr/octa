@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: "Optima", sans-serif;
+            background-color: #232323;
+            color: #daff7d;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            background-color: #333633;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #daff7d;
+            text-align: center;
+        }
+        .stat {
+            margin: 15px 0;
+            font-size: 18px;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #009554;
+            color: #232323;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        .btn:hover {
+            background-color: #daff7d;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Welcome to Your Dashboard</h2>
+
+        <div id="userStats">
+            <!-- User stats will populate here -->
+        </div>
+
+        <a href="food_log.html" class="btn">Go to Food Log</a>
+        <a href="results.html" class="btn">Go to Macro Calculator</a>
+    </div>
+
+    <script>
+        // Get user info from localStorage
+        const age = localStorage.getItem("age");
+        const height = localStorage.getItem("height");
+        const weight = localStorage.getItem("weight");
+        const gender = localStorage.getItem("gender");
+        const goal = localStorage.getItem("goal");
+        const experience = localStorage.getItem("experience");
+        const type = localStorage.getItem("type");
+
+        const statsDiv = document.getElementById("userStats");
+
+        statsDiv.innerHTML = `
+            <div class="stat"><strong>Gender:</strong> ${gender}</div>
+            <div class="stat"><strong>Age:</strong> ${age}</div>
+            <div class="stat"><strong>Height:</strong> ${height} cm</div>
+            <div class="stat"><strong>Weight:</strong> ${weight} kg</div>
+            <div class="stat"><strong>Goal:</strong> ${goal}</div>
+            <div class="stat"><strong>Experience:</strong> ${experience}</div>
+            <div class="stat"><strong>Fitness Type:</strong> ${type}</div>
+        `;
+    </script>
+
+</body>
+</html>
